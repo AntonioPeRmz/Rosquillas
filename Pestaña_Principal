@@ -1,0 +1,402 @@
+PImage Homero,Instrucciones1,Juego,Instrucciones2,Intrucciones3,Lata,Lampara,Letrero,Chupon,Bomba,Brocoli,Rosquilla,Cuchillo,
+       Pez, Pizza, Pelota;
+PImage Victoria, Perdedor;
+int poscX = 30, poscY = 400;
+int posaX = 700, posaY = 300, velaX = 4;
+int posaaX = 700, posaaY = 75, velaaX = 2;
+int posanX = 700, posanY = 200, velanX = 3;
+int posabX = 700, posabY = 400, velabX = 2;
+int posagrX = 700, posagrY = 150, velagrX = (int)random(1,5), velagrY = (int)random(1,5);
+int posagnX = 700, posagnY = 350, velagnX = (int)random(1,5), velagnY = (int)random(1,5);
+int poshX = (int)random(50,700), poshY = (int)random(50,450);
+int pantalla=0;
+int score=0;
+int disthcX,disthcY,distacX, distacY,distaacX,distaacY;
+int distancX, distancY, distabcX, distabcY;
+int distagrcX, distagrcY, distagncX, distagncY;
+
+import shiffman.box2d.*;
+import org.jbox2d.common.*;
+import org.jbox2d.dynamics.joints.*;
+import org.jbox2d.collision.shapes.*;
+import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.common.*;
+import org.jbox2d.dynamics.*;
+import org.jbox2d.dynamics.contacts.*;
+
+Box2DProcessing box2d;
+ArrayList<Particle> particles;
+Boundary wall;
+
+
+void setup(){
+  size(750,500);
+  Homero = loadImage("Homero.png"); Instrucciones1 = loadImage("Instrucciones1.png"); Juego = loadImage("Juego.png"); Instrucciones2 = loadImage("Instrucciones2.png");
+  Intrucciones3 = loadImage("Instrucciones3.png"); Lata = loadImage("Lata.png"); Lampara = loadImage("Lampara.png"); Letrero = loadImage("Letrero.png"); Chupon = loadImage("Chupon.png");
+  Bomba = loadImage("Bomba.png"); Brocoli = loadImage("Brocoli.png"); Rosquilla = loadImage("Rosquilla.png"); Victoria = loadImage("Victoria.png"); Perdedor = loadImage("Perdedor.png"); 
+  Cuchillo = loadImage("Cuchillo.png"); Pez = loadImage("Pez.png"); Pizza = loadImage("Pizza.png"); Pelota = loadImage("Pelota.png");
+
+  box2d = new Box2DProcessing(this);
+  box2d.createWorld();
+  box2d.listenForCollisions();
+  particles = new ArrayList<Particle>();
+  wall = new Boundary(width/2, height-30, width, 10);
+}
+
+void draw(){
+    if(pantalla==0){
+    image(Instrucciones1,0,0,width,height);
+    
+    }
+    else if(pantalla==1){
+    pantalla1();
+    image(Homero,poscX,poscY,70,70); 
+    if (random(4) < 0.1) { //VELOCIDAD CON LA QUE APARECEN
+    float sz = random(0, 8);
+    particles.add(new Particle(random(width), 20, sz, int(random(0,3))));
+    //RESTA DE PUNTOS LATA Y LAMPARA
+    distacX = abs((poscX)-posaX);
+    distacY = abs((poscY)-posaY);
+    if((distacX<25)&&(distacY<25)){
+    score=score-10;}
+  }
+  
+  box2d.step();
+  for (int i = particles.size()-1; i >= 0; i--) {
+    Particle p = particles.get(i);
+    p.display();
+    if (p.done()) {
+      particles.remove(i);
+    }
+  }
+
+  wall.display();if(score>=1500){
+      pantalla=2;
+    }
+    score();
+  }
+  
+  else if(pantalla==2){
+    image(Instrucciones2,0,0,width,height);
+  }
+  else if(pantalla==3){
+    pantalla1();
+    pantalla3();
+    image(Homero,poscX,poscY,70,70);
+    if (random(6) < 0.1) { //VELOCIDAD CON LA QUE APARECEN
+    float sz = random(4, 8);
+    particles.add(new Particle(random(width), 20, sz, int(random(0,5))));
+    //RESTA DE PUNTOS LATA Y LAMPARA
+    distacX = abs((poscX)-posaX);
+    distacY = abs((poscY)-posaY);
+    if((distacX<50)&&(distacY<50)){
+    score=score-10;}
+  }
+  
+  box2d.step();
+  
+  for (int i = particles.size()-1; i >= 0; i--) {
+    Particle p = particles.get(i);
+    p.display();
+    if (p.done()) {
+      particles.remove(i);
+    }
+  }
+
+  wall.display();
+  if(score>=3000){
+      pantalla=4;
+    }
+   score();
+  }
+
+  else if(pantalla==4){
+    image(Intrucciones3,0,0,width,height);
+  }
+  else if(pantalla==5){
+    pantalla1();
+    pantalla3();
+    pantalla5();
+    image(Homero,poscX,poscY,70,70);
+    if (random(3) < 0.1) { //VELOCIDAD CON LA QUE APARECEN
+    float sz = random(4, 8);
+    particles.add(new Particle(random(width), 20, sz, int(random(0,9))));
+    //RESTA DE PUNTOS LATA Y LAMPARA
+    distacX = abs((poscX)-posaX);
+    distacY = abs((poscY)-posaY);
+    if((distacX<75)&&(distacY<75)){
+    score=score-10;}
+  }
+    score();if(score>=5000){
+      image(Victoria,0,0,width,height);
+      score=5000;
+    }
+  }
+  
+  else if(pantalla==6){
+    image(Perdedor,0,0,width,height);
+  }
+  
+  
+//CAMBIOS EN LAS PANTALLAS
+  if(key == 'a'){
+    pantalla=3;
+  }
+  if(key == 'q'){
+    pantalla=5;
+  }
+  if(key == 'r'){
+    pantalla=1;
+  }
+  
+  //MOVIMIENTO DE HOMERO
+  if(key == CODED){
+    if (keyCode == UP) {
+      poscY=poscY-9;
+    } 
+    else if (keyCode == DOWN) {
+      poscY=poscY+9;
+    }
+    if(keyCode == LEFT) {
+      poscX=poscX-9;
+    }
+    else if(keyCode == RIGHT) {
+      poscX=poscX+9;
+    }
+    //limitaciones de la pantalla en el movimiento del Homero
+    if(poscX <= 20){
+      poscX=20;
+    }
+   if(poscX>=width-90){
+     poscX=width-90;
+    }
+   if(poscY <= 18){
+     poscY = 18;
+   }
+   if(poscY >= height-90){
+     poscY = height-90;
+   }
+ }
+  
+  
+  
+}    
+
+
+void score(){
+  fill(0);
+  textSize(15);
+  text("Score: " + score, 40, 50);if(score<=-1){
+    pantalla=6;
+    score=0;
+    poscX = 30; 
+    poscY = 400;
+  }
+}
+
+
+void keyPressed(){
+  if(key == 'a'){
+    pantalla=3;
+  }
+  if(key == 'q'){
+    pantalla=5;
+  }
+  if(key == 'r'){
+    pantalla=1;
+  }
+  
+  if(key == CODED){
+    if (keyCode == UP) {
+      poscY=poscY-9;
+    } 
+    else if (keyCode == DOWN) {
+      poscY=poscY+9;
+    }
+    if(keyCode == LEFT) {
+      poscX=poscX-9;
+    }
+    else if(keyCode == RIGHT) {
+      poscX=poscX+9;
+    }
+    
+    //LIMITACIONES DE HOMERO
+    if(poscX <= 20){
+      poscX=20;
+    }
+   if(poscX>=width-90){
+     poscX=width-90;
+    }
+   if(poscY <= 18){
+     poscY = 18;
+   }
+   if(poscY >= height-90){
+     poscY = height-90;
+   }
+ }
+}
+
+void mousePressed(){
+  if(mouseButton == LEFT){
+    pantalla=1;
+    println("APRETAS");
+  }
+ 
+  if(mouseButton == RIGHT){
+  score=score+100;
+  }
+  
+}
+
+
+void pantalla1(){
+  image(Juego,0,0,width,height);
+  image(Rosquilla,poshX,poshY,40,40);
+  //COLISION DE HOMERO Y LA DONA
+  disthcX = abs((poscX+27)-poshX);
+  disthcY = abs((poscY+35)-(poshY));
+  if((disthcX<20)&&(disthcY<20)){
+   poshX = (int)random(75,400);
+   poshY = (int)random(75,400); 
+   score=score+100;
+  }
+  
+  image(Cuchillo,posaX,posaY,60,60);
+  posaX=posaX-velaX; 
+  if(posaX <= 0){
+  posaX = 700;
+  posaY = (int)random(50,420); 
+  velaX = (int)random(4,2);
+   }
+  distacX = abs((poscX)-posaX);
+  distacY = abs((poscY)-posaY);
+  if((distacX<25)&&(distacY<25)){
+  score=score-10;}
+  
+   
+  image(Pez,posaaX,posaaY,70,60);
+  posaaX=posaaX-velaaX;
+  if(posaaX <= 0){
+  posaaX = 700;
+  posaaY = (int)random(50,420); 
+  velaaX = (int)random(4,2);
+   }
+  distaacX = abs((poscX)-posaaX);
+  distaacY = abs((poscY)-posaaX);
+  if((distaacX<25)&&(distaacY<25)){
+  score=score-10;}
+  
+ }
+ 
+ 
+void pantalla3(){
+  image(Pizza,posanX,posanY,70,60);
+  posanX=posanX-velanX; 
+  if(posanX <= 0){
+  posanX = 700;
+  posanY = (int)random(50,420); 
+  velanX = (int)random(3,1);
+   }
+  distancX = abs(poscX-posanX);
+  distancY = abs(poscY-posanY);
+  if((distancX<50)&&(distancY<50)){
+  score=score-10;
+}
+ 
+  image(Brocoli,posabX,posabY,75,60);
+  posabX=posabX-velabX; 
+  if(posabX <= 0){
+  posabX = 700;
+  posabY = (int)random(50,420); 
+  velabX = (int)random(3,1);
+   }
+  distabcX = abs(poscX-posabX);
+  distabcY = abs(poscY-posabY);
+  if((distabcX<50)&&(distabcY<50)){
+  score=score-10;
+}
+}
+
+
+void pantalla5(){
+
+  image(Bomba,posagrX,posagrY,100,85);
+  posagrX = posagrX-velagrX;
+  posagrY = posagrY-velagrY;
+  if((posagrX<= 0)){
+    velagrX = (int)random(1,5) * -1;
+  }
+  if(posagrX+100 >= width){
+    velagrX = (int)random(1,5);
+  }
+  if(posagrY <= 0){
+    velagrY = (int)random(1,5) * -1;
+  }
+  if(posagrY+65 >= height){
+  velagrY = (int)random(1,5);
+  }
+  distagrcX = abs(poscX-posagrX);
+  distagrcY = abs(poscY-posagrY);
+  if((distagrcX<75)&&(distagrcY<75)){
+  score=score-20;
+  }
+  
+  
+  
+  image(Pelota,posagnX,posagnY,100,85);
+  posagnX = posagnX-velagnX;
+  posagnY = posagnY-velagnY;
+  if(posagnX<= 0){
+    velagnX = (int)random(1,5) * -1;
+  }
+  if(posagnX+100 >= width){
+    velagnX = (int)random(1,5);
+  }
+  if(posagnY <= 0){
+    velagnY = (int)random(1,5) * -1;
+  }
+  if(posagnY+65 >= height){
+  velagnY = (int)random(1,5);
+}
+  distagncX = abs(poscX-posagnX);
+  distagncY = abs(poscY-posagnY);
+  if((distagncX<75)&&(distagncY<75)){
+  score=score-20;
+  }
+}
+
+
+void beginContact(Contact cp) {
+  // Get both shapes
+  Fixture f1 = cp.getFixtureA();
+  Fixture f2 = cp.getFixtureB();
+  // Get both bodies
+  Body b1 = f1.getBody();
+  Body b2 = f2.getBody();
+
+  // Get our objects that reference these bodies
+  Object o1 = b1.getUserData();
+  Object o2 = b2.getUserData();
+
+  if (o1.getClass() == Particle.class && o2.getClass() == Particle.class) {
+    Particle p1 = (Particle) o1;
+    p1.delete();
+    Particle p2 = (Particle) o2;
+    p2.delete();
+  }
+
+  if (o1.getClass() == Boundary.class) {
+    Particle p = (Particle) o2;
+    p.change();
+  }
+  if (o2.getClass() == Boundary.class) {
+    Particle p = (Particle) o1;
+    p.change();
+  }
+
+
+}
+
+// Objects stop touching each other
+void endContact(Contact cp) {
+}
